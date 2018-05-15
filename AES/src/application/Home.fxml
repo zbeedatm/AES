@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.HomeController">
+   <children>
+      <SplitPane dividerPositions="0.19933184855233854" layoutX="-194.0" layoutY="-214.0" prefHeight="953.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1165.0" prefWidth="168.0" style="-fx-background-color: White;">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="176.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <image>
+                        <Image url="@../../assets/img/logo4.JPG" />
+                     </image>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1146.0" prefWidth="776.0" style="-fx-background-color: LightBlue;">
+               <children>
+                  <Label layoutX="93.0" layoutY="69.0" prefHeight="54.0" prefWidth="468.0" text="Welcome to AES system">
+                     <font>
+                        <Font name="System Bold" size="37.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="225.0" layoutY="250.0" prefHeight="21.0" prefWidth="265.0" text="Please select an action:">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="btnShowQuestions" layoutX="225.0" layoutY="291.0" mnemonicParsing="false" onAction="#showQuestionsForm" prefHeight="31.0" prefWidth="156.0" text="Show Questions">
+                     <effect>
+                        <Blend mode="DARKEN" />
+                     </effect>
+                  </Button>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

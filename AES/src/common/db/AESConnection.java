@@ -1,4 +1,4 @@
-package com.aes.connection;
+package common.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -6,10 +6,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 
-public class MysqlConnection {
+public class AESConnection {
 
 	private static Connection conn = null;
+	private static Object lock = new Object();
 
+//	Singleton instance
 //	private MysqlConnection() {}
 //
 //	public static Connection getConnection() {
@@ -20,7 +22,11 @@ public class MysqlConnection {
 //	}
 	
 	static {
-		initConnection();
+		synchronized (lock) {
+			if (conn == null) {
+				initConnection();
+			}
+		}
 	}
 
 	private static void initConnection() {
@@ -33,7 +39,7 @@ public class MysqlConnection {
 
 		try 
 		{
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/aes","root","root");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost/aes?autoReconnect=true&useSSL=false","root","root");
 			System.out.println("SQL connection succeed");
 		} catch (SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage());
@@ -60,7 +66,7 @@ public class MysqlConnection {
 	}
 
 
-	////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////	For testing	////////////////////////////////////
 
 	public static void main(String[] args) 
 	{
