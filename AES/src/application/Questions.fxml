@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
@@ -19,9 +20,22 @@
                   </TableView>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="321.0" prefWidth="798.0">
                <children>
-                  <Button fx:id="btnBack" layoutX="634.0" layoutY="250.0" mnemonicParsing="false" onAction="#goBackToHomePage" text="Back to Home Page" />
+                  <Button fx:id="btnBack" layoutX="693.0" layoutY="256.0" mnemonicParsing="false" onAction="#goBackToHomePage" text="Back to Home" />
+                  <TextArea fx:id="questionText" layoutX="14.0" layoutY="31.0" prefHeight="172.0" prefWidth="768.0" />
+                  <Label layoutX="14.0" layoutY="6.0" text="Question text:" />
+                  <Label layoutX="17.0" layoutY="210.0" text="Select correct answer:" />
+                  <RadioButton fx:id="rbAnswer1" layoutX="14.0" layoutY="238.0" mnemonicParsing="false" text="a">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="groupAnswers" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="rbAnswer2" layoutX="60.0" layoutY="238.0" mnemonicParsing="false" text="b" toggleGroup="$groupAnswers" />
+                  <RadioButton fx:id="rbAnswer3" layoutX="115.0" layoutY="238.0" mnemonicParsing="false" text="c" toggleGroup="$groupAnswers" />
+                  <RadioButton fx:id="rbAnswer4" layoutX="162.0" layoutY="238.0" mnemonicParsing="false" text="d" toggleGroup="$groupAnswers" />
+                  <Button fx:id="btnUpdate" layoutX="627.0" layoutY="257.0" mnemonicParsing="false" onAction="#updateQuestion" text="Update" />
+                  <Label fx:id="lblMessage" layoutX="17.0" layoutY="261.0" prefHeight="17.0" prefWidth="583.0" />
                </children></AnchorPane>
         </items>
       </SplitPane>

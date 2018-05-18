@@ -11,16 +11,6 @@ public class AESConnection {
 	private static Connection conn = null;
 	private static Object lock = new Object();
 
-//	Singleton instance
-//	private MysqlConnection() {}
-//
-//	public static Connection getConnection() {
-//		if (conn == null) {
-//			initConnection();
-//		}
-//		return conn;
-//	}
-	
 	static {
 		synchronized (lock) {
 			if (conn == null) {
@@ -47,15 +37,19 @@ public class AESConnection {
 			System.out.println("VendorError: " + ex.getErrorCode());
 		}
 	}
+	
+	public static Connection getConnection() {
+		return conn;
+	}
 
-	public static ResultSet getQuestions()
+	public static ResultSet getQueryResult(String query)
 	{
 		Statement stmt;
 		ResultSet rs=null;
 		try 
 		{
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM questions;");
+			rs = stmt.executeQuery(query);
 			//stmt.close();
 		} 
 		catch (SQLException e) {
@@ -68,27 +62,27 @@ public class AESConnection {
 
 	/////////////////////////////////////	For testing	////////////////////////////////////
 
-	public static void main(String[] args) 
-	{
-		initConnection();
-		printQuestions();
-	}
-
-	public static void printQuestions()
-	{
-		try 
-		{
-			ResultSet rs = getQuestions();
-			while(rs.next())
-			{
-				// Print out the values
-				System.out.println(rs.getString(4)); //Question Text field
-			} 
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) 
+//	{
+//		initConnection();
+//		printQuestions();
+//	}
+//
+//	public static void printQuestions()
+//	{
+//		try 
+//		{
+//			ResultSet rs = getQueryResult("Select * From questions");
+//			while(rs.next())
+//			{
+//				// Print out the values
+//				System.out.println(rs.getString(4)); //Question Text field
+//			} 
+//			rs.close();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 }
 
