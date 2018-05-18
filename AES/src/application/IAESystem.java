@@ -1,6 +1,6 @@
 package application;
 
-import java.sql.ResultSet;
+import common.data.Request;
 
 /**
  * This interface implements the abstract method used to display
@@ -14,7 +14,7 @@ public interface IAESystem
 	 */
 	public abstract void display(String message);
 	
-	public abstract void retriveResultSet(String message);
+	public abstract void retriveResultSet(Request request);
 
 	//public abstract ResultSet populateQuestionsList(ResultSet message);
 }

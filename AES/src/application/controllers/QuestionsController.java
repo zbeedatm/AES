@@ -8,9 +8,10 @@ import java.sql.ResultSet;
 import java.util.ResourceBundle;
 
 import application.AESystem;
-import common.db.AESConnection;
+import common.data.DataPage;
+import common.data.Record;
+import common.data.Request;
 import common.models.Question;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,10 +31,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import server.AESConnection;
 
 public class QuestionsController implements Initializable {
 
-	private static ObservableList<Question> data;
+	private static ObservableList<Question> data = FXCollections.observableArrayList();
 
 	@FXML private TableView<Question> tblViewQuestions;
 	@FXML private TableColumn<Question, SimpleStringProperty> colQuestionID;
@@ -51,6 +53,7 @@ public class QuestionsController implements Initializable {
 	@FXML private Button btnBack;
 
 	private String selectedQuestionID;
+	private Request request = new Request("get_questions", "SELECT * FROM questions q inner join subjects s on q.fkSubjectID = s.subjectId;");
 
 	public QuestionsController() {
 		FXMLLoader loader = new FXMLLoader(
@@ -58,19 +61,29 @@ public class QuestionsController implements Initializable {
 						"../Questions.fxml"
 						)
 				);
-
-		//populateQuestionsListView("Java");
-		//AESystem.client.handleMessageFromClientUI("Java"); //retriveResultSet("Java");
-
+		
+		try        
+		{
+			AESystem.application.retriveResultSet(request);
+		    Thread.sleep(1000);
+		} 
+		catch(InterruptedException ex) 
+		{
+		    Thread.currentThread().interrupt();
+		}
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		colQuestionID.setCellValueFactory(new PropertyValueFactory<>("questionID"));
 		colTeacherName.setCellValueFactory(new PropertyValueFactory<>("teacherName"));
+		colSubject.setCellValueFactory(new PropertyValueFactory<>("subjectName"));
+		tblViewQuestions.setItems(data);
+		
+		handleRowSelection();
+	}
 
-		populateQuestionsListView("Java");
-
+	private void handleRowSelection() {
 		tblViewQuestions.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 			if (newSelection != null) {
 				//tblViewQuestions.getSelectionModel().clearSelection();
@@ -91,27 +104,42 @@ public class QuestionsController implements Initializable {
 				}
 			}
 		});
-	}
-
-	public static void populateQuestionsListView(ResultSet result) {
-		try {
-			while (result.next()) {
-				String qNum = result.getString("questionNum");
-				String qText = result.getString("questionText");
-				ObservableList<String> list = FXCollections.observableArrayList(qNum, qText);
-				//lstQuestions.getItems().addAll(list);
-			}
-
-			result.close();    
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 	}	
 
-	public void populateQuestionsListView(String subject){        
+	public static void populateQuestionsListView(DataPage dataPage){        
+		data = FXCollections.observableArrayList();
+		try{  
+			for (Record record : dataPage){
+				Question q = new Question();
+
+				q.questionID.set(record.get(0));
+				q.questionNum.set( Integer.parseInt(record.get(1)) ); 
+				q.teacherName.set(record.get(2));
+				q.questionText.set(record.get(3));
+				
+				q.answer1.set( Integer.parseInt(record.get(4)) );
+				q.answer2.set( Integer.parseInt(record.get(5)) );
+				q.answer3.set( Integer.parseInt(record.get(6)) );
+				q.answer4.set( Integer.parseInt(record.get(7)) );
+
+				q.subjectName.set(record.get(10));
+				
+				data.add(q);                  
+			}
+			
+			//tblViewQuestions.setItems(data);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			System.out.println("Error on Building Data");            
+		}
+	}
+	
+	/*public void populateQuestionsListViewResultSet(String subject){        
 		data = FXCollections.observableArrayList();
 		try{      
 			ResultSet rs = AESConnection.getQueryResult("SELECT * FROM questions;");  
+				
 			while(rs.next()){
 				Question q = new Question();
 
@@ -127,13 +155,15 @@ public class QuestionsController implements Initializable {
 
 				data.add(q);                  
 			}
+			
 			tblViewQuestions.setItems(data);
 		}
 		catch(Exception e){
 			e.printStackTrace();
 			System.out.println("Error on Building Data");            
 		}
-	}
+		
+	}*/
 
 	public void updateQuestion(ActionEvent event)
 	{
@@ -157,7 +187,18 @@ public class QuestionsController implements Initializable {
 			lblMessage.setText("Data was updated successfuly");
 			lblMessage.setTextFill(Paint.valueOf("Green"));
 			
-			populateQuestionsListView("Java");
+			//Call again to refresh
+			try        
+			{
+				AESystem.application.retriveResultSet(request);
+			    Thread.sleep(1000);
+			} 
+			catch(InterruptedException ex) 
+			{
+			    Thread.currentThread().interrupt();
+			}
+			
+			tblViewQuestions.setItems(data);
 
 			//conn.close();
 		}
@@ -173,13 +214,13 @@ public class QuestionsController implements Initializable {
 
 	public void goBackToHomePage(ActionEvent event) throws IOException
 	{
-		Parent tableViewParent = FXMLLoader.load(getClass().getResource("../Home.fxml"));
-		Scene tableViewScene = new Scene(tableViewParent);
+		Parent parent = FXMLLoader.load(getClass().getResource("../Home.fxml"));
+		Scene scene = new Scene(parent);
 
 		//This line gets the Stage information
 		Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
 
-		window.setScene(tableViewScene);
+		window.setScene(scene);
 		window.show();
 	}
 

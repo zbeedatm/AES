@@ -1,10 +1,11 @@
 package application;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import application.controllers.QuestionsController;
+import common.data.Request;
+import common.data.Response;
 import ocsf.client.AbstractClient;
 
 /**
@@ -49,17 +50,19 @@ public class AESClient extends AbstractClient
 	 * @param msg The message from the server.
 	 */
 	@Override
-	public void handleMessageFromServer(Object msg) 
+	public void handleMessageFromServer(Object obj) 
 	{
-		clientUI.display(msg.toString());
+		clientUI.display(obj.toString());
 		
-		//QuestionsController.populateQuestionsListView(msg.toString());
+		Response response = (Response) obj;
+		switch ( response.getAction().toLowerCase() ) {
+			case "get_questions": 
+					//(new QuestionsController()).populateQuestionsListView(response.getData());
+					QuestionsController.populateQuestionsListView(response.getData());
+					break;
+		}
 	}
 
-//	public ResultSet callServerToGetQuestionsList(Object msg)  
-//	{
-//		return clientUI.populateQuestionsList((ResultSet) msg);
-//	}
 	
 	///////////////////////////////////////////////////////
 
@@ -68,11 +71,11 @@ public class AESClient extends AbstractClient
 	 *
 	 * @param message The message from the UI.    
 	 */
-	public void handleMessageFromClientUI(String message)  
+	public void handleMessageFromClientUI(Request request)  
 	{
 		try
 		{
-			sendToServer(message);
+			sendToServer(request);
 		}
 		catch(IOException e)
 		{
@@ -89,8 +92,7 @@ public class AESClient extends AbstractClient
 		}
 		catch(IOException e)
 		{
-			clientUI.display
-			("Could not send message to server.  Terminating client.");
+			clientUI.display("Could not send message to server.  Terminating client.");
 			quit();
 		}
 	}

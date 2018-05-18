@@ -15,7 +15,7 @@
                     <columns>
                       <TableColumn fx:id="colQuestionID" prefWidth="180.0" text="Question ID" />
                         <TableColumn fx:id="colTeacherName" prefWidth="173.0" text="Teacher Name" />
-                        <TableColumn fx:id="colSubject" prefWidth="135.0" text="Subject" />
+                        <TableColumn fx:id="colSubject" prefWidth="254.0" text="Subject" />
                     </columns>
                   </TableView>
                </children>

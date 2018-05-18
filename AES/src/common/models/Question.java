@@ -9,6 +9,7 @@ public class Question{
 	public SimpleIntegerProperty questionNum = new SimpleIntegerProperty();
 	public SimpleStringProperty questionText = new SimpleStringProperty(); 
 	public SimpleStringProperty teacherName = new SimpleStringProperty(); 
+	public SimpleStringProperty subjectName = new SimpleStringProperty();
 	
 	public SimpleIntegerProperty answer1 = new SimpleIntegerProperty();
 	public SimpleIntegerProperty answer2 = new SimpleIntegerProperty();
@@ -29,6 +30,10 @@ public class Question{
 
 	public String getTeacherName() {
 		return teacherName.get();
+	}
+	
+	public String getSubjectName() {
+		return subjectName.get();
 	}
 
 	public SimpleIntegerProperty getAnswer1() {

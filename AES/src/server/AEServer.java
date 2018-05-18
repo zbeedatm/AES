@@ -1,5 +1,14 @@
 package server;
 
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
+
+import common.data.DataPage;
+import common.data.Record;
+import common.data.Request;
+import common.data.Response;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 
@@ -38,32 +47,27 @@ public class AEServer extends AbstractServer
 	 * @param client The connection from which the message originated.
 	 */
 	@Override
-	public void handleMessageFromClient (Object msg, ConnectionToClient client)
+	public void handleMessageFromClient (Object obj, ConnectionToClient client)
 	{
-		System.out.println("Message received: " + msg + " from " + client);
+		System.out.println("Message received: " + obj + " from " + client);
 
-//		ArrayList<String> list = new ArrayList<String>();
-//		ResultSet result = AESConnection.getQuestions();
-//		try {
-//			while (result.next()) {
-//				String current = result.getString("questionNum");
-//				list.add(current);
-//				//list = FXCollections.observableArrayList(current);
-//			}
-//
-//			result.close();     
-//		} catch (Exception ex) {
-//			ex.printStackTrace();
-//		}
-//
-//		this.sendToAllClients(list.toString()); //AESConnection.getQuestions());
+		Request request = (Request) obj;
+		Response response;
 		
-		this.sendToAllClients(msg.toString());
-
-		//TODO
-		//How to distinguish between different UI operations?
-		//To send operation name in msg Object?
-		//this.sendToCurrentListeningClient(AESConnection.getQuestions());
+		switch (request.getAction().toLowerCase()) {
+			case "get_questions": 
+					try {
+						response = new Response(request.getAction(),
+												handleDataReturnRequest(request.getQuery())
+												);
+						client.sendToClient(response);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				break;
+		}
+		
+		//this.sendToAllClients(obj.toString());
 	}
 	
 //	public void getQuestions(Object msg, ConnectionToClient client)
@@ -71,6 +75,30 @@ public class AEServer extends AbstractServer
 //		//System.out.println("Message received: " + msg + " from " + client);
 //		this.sendToCurrentListeningClient(AESConnection.getQuestions());
 //	}
+	
+	private DataPage handleDataReturnRequest(String query) {
+		ResultSet result = AESConnection.getQueryResult(query);
+		
+		DataPage data = new DataPage();
+		Record record = null;
+		
+		try {
+			ResultSetMetaData rsmd = result.getMetaData();
+			while (result.next()) {
+				record = new Record();
+				for (int i=1; i<=rsmd.getColumnCount(); i++) {
+					record.add(result.getString(i));
+				}
+				data.add(record);
+			}
+
+			result.close();     
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return data;
+	}
 
 	/**
 	 * This method overrides the one in the superclass.  Called

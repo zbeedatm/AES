@@ -2,6 +2,8 @@ package application;
 import java.io.IOException;
 import java.sql.ResultSet;
 
+import common.data.DataPage;
+import common.data.Request;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,6 +20,8 @@ import javafx.stage.Stage;
 public class AESystem extends Application implements IAESystem 
 {
 	//Class variables *************************************************
+	
+	public static AESystem application;
 
 	/**
 	 * The default port to connect on.
@@ -74,25 +78,19 @@ public class AESystem extends Application implements IAESystem
 	}
 
 	@Override
-	public void retriveResultSet(String message) {
-		client.handleMessageFromClientUI(message);
+	public void retriveResultSet(Request request) {
+		client.handleMessageFromClientUI(request);
 	}
 	
 	//Class methods ***************************************************
 
-//	/**
-//	 * Sends upon GUI action to the client's message handler.
-//	 */
-//	public ResultSet getQuestionsList(String subject) {
-//		return client.callServerToGetQuestionsList(subject);
+	/**
+	 * Sends upon GUI action to the client's message handler.
+	 */
+//	public void getQuestionsList(String subject) {
+//		Request request = new Request("get_questions", "SELECT * FROM questions;");
+//		retriveResultSet(request); 
 //	}
-
-
-//	@Override
-//	public ResultSet populateQuestionsList(ResultSet message) {
-//		return message;
-//	}
-
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -133,7 +131,7 @@ public class AESystem extends Application implements IAESystem
 			  host = "localhost";
 		  }
 		  
-		  AESystem application= new AESystem(host, DEFAULT_PORT);
+		  application= new AESystem(host, DEFAULT_PORT);
 		  //application.retriveResultSet("Java"); //for testing
 		  //client.handleMessageFromClientUI("Java");
 		  
