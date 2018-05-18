@@ -1,9 +1,8 @@
 package application;
 import java.io.IOException;
-import java.sql.ResultSet;
 
-import common.data.DataPage;
 import common.data.Request;
+import common.data.UpdateRequest;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -74,7 +73,6 @@ public class AESystem extends Application implements IAESystem
 	public void display(String message) 
 	{
 		System.out.println("> " + message);
-		
 	}
 
 	@Override
@@ -82,15 +80,12 @@ public class AESystem extends Application implements IAESystem
 		client.handleMessageFromClientUI(request);
 	}
 	
+	@Override
+	public void update(UpdateRequest request) {
+		client.handleMessageFromClientUI(request);
+	}
+	
 	//Class methods ***************************************************
-
-	/**
-	 * Sends upon GUI action to the client's message handler.
-	 */
-//	public void getQuestionsList(String subject) {
-//		Request request = new Request("get_questions", "SELECT * FROM questions;");
-//		retriveResultSet(request); 
-//	}
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -120,6 +115,7 @@ public class AESystem extends Application implements IAESystem
 	  public static void main(String[] args) throws IOException 
 	  {
 		  String host = "";
+		  @SuppressWarnings("unused")
 		  int port = 0;  //The port number
 
 		  try
@@ -138,5 +134,6 @@ public class AESystem extends Application implements IAESystem
 		  //Launch application
 		  launch(args);
 	  }
+
 }
 //End of ConsoleChat class

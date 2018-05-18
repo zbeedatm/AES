@@ -1,10 +1,8 @@
 package application;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import application.controllers.QuestionsController;
-import common.data.Request;
 import common.data.Response;
 import ocsf.client.AbstractClient;
 
@@ -71,7 +69,7 @@ public class AESClient extends AbstractClient
 	 *
 	 * @param message The message from the UI.    
 	 */
-	public void handleMessageFromClientUI(Request request)  
+	public void handleMessageFromClientUI(Object request)  
 	{
 		try
 		{
@@ -79,20 +77,7 @@ public class AESClient extends AbstractClient
 		}
 		catch(IOException e)
 		{
-			clientUI.display("Could not send message to server. Terminating client.");
-			quit();
-		}
-	}
-
-	public void updateQuestionAnswer(ArrayList<String> questionStruct)  
-	{
-		try
-		{
-			sendToServer(questionStruct);
-		}
-		catch(IOException e)
-		{
-			clientUI.display("Could not send message to server.  Terminating client.");
+			clientUI.display("Could not send message to server. Terminating client. " + e.getMessage());
 			quit();
 		}
 	}

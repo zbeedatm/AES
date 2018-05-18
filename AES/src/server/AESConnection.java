@@ -1,6 +1,7 @@
 package server;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -57,6 +58,32 @@ public class AESConnection {
 		}
 		
 		return rs;
+	}
+	
+	public static void handleUpdateQuery(String query, Object[] values)
+	{
+		try
+		{
+			// create the java mysql update preparedstatement
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			for (int i=0; i<values.length; i++) {
+				if (values[i] instanceof Integer) {
+					preparedStmt.setInt(i+1, (int) values[i]);
+				} else if (values[i] instanceof String) {
+					preparedStmt.setString(i+1, values[i].toString());
+				} 
+			}
+
+			// execute the java preparedstatement
+			preparedStmt.executeUpdate();
+
+			//conn.close();
+		}
+		catch (Exception e)
+		{
+			System.err.println("Got an exception! ");
+			System.err.println(e.getMessage());
+		}
 	}
 
 

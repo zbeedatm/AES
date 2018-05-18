@@ -3,12 +3,12 @@ package server;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.util.ArrayList;
 
 import common.data.DataPage;
 import common.data.Record;
 import common.data.Request;
 import common.data.Response;
+import common.data.UpdateRequest;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 
@@ -53,7 +53,6 @@ public class AEServer extends AbstractServer
 
 		Request request = (Request) obj;
 		Response response;
-		
 		switch (request.getAction().toLowerCase()) {
 			case "get_questions": 
 					try {
@@ -65,16 +64,20 @@ public class AEServer extends AbstractServer
 						e.printStackTrace();
 					}
 				break;
+			case "update_question": 
+					UpdateRequest updateRequest = (UpdateRequest) obj;
+					AESConnection.handleUpdateQuery(updateRequest.getQuery(), updateRequest.getValues());
+					// Causing socket exception!!!!
+//					try {
+//						client.sendToClient("Question was updated successfully.");
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+					break;
 		}
 		
 		//this.sendToAllClients(obj.toString());
 	}
-	
-//	public void getQuestions(Object msg, ConnectionToClient client)
-//	{
-//		//System.out.println("Message received: " + msg + " from " + client);
-//		this.sendToCurrentListeningClient(AESConnection.getQuestions());
-//	}
 	
 	private DataPage handleDataReturnRequest(String query) {
 		ResultSet result = AESConnection.getQueryResult(query);
@@ -99,7 +102,7 @@ public class AEServer extends AbstractServer
 		
 		return data;
 	}
-
+	
 	/**
 	 * This method overrides the one in the superclass.  Called
 	 * when the server starts listening for connections.

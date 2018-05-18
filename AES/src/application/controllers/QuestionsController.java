@@ -2,15 +2,13 @@ package application.controllers;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ResourceBundle;
 
 import application.AESystem;
 import common.data.DataPage;
 import common.data.Record;
 import common.data.Request;
+import common.data.UpdateRequest;
 import common.models.Question;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -31,7 +29,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-import server.AESConnection;
 
 public class QuestionsController implements Initializable {
 
@@ -56,6 +53,7 @@ public class QuestionsController implements Initializable {
 	private Request request = new Request("get_questions", "SELECT * FROM questions q inner join subjects s on q.fkSubjectID = s.subjectId;");
 
 	public QuestionsController() {
+		@SuppressWarnings("unused")
 		FXMLLoader loader = new FXMLLoader(
 				getClass().getResource(
 						"../Questions.fxml"
@@ -164,8 +162,41 @@ public class QuestionsController implements Initializable {
 		}
 		
 	}*/
-
+	
 	public void updateQuestion(ActionEvent event)
+	{
+		String query = "update questions set questionText = ?, answer1 = ?, answer2 = ?, answer3 = ?, answer4 = ? where questionID = ?";
+		Object[] values = new Object[6];
+		values[0] = questionText.getText();
+		values[1] = rbAnswer1.isSelected() ? 1 : 0;
+		values[2] = rbAnswer2.isSelected() ? 1 : 0;
+		values[3] = rbAnswer3.isSelected() ? 1 : 0;
+		values[4] = rbAnswer4.isSelected() ? 1 : 0;
+		values[5] = selectedQuestionID;
+
+		UpdateRequest updateRequest = new UpdateRequest("update_Question", query, values);
+		AESystem.application.update(updateRequest);
+		
+		//Call again to refresh
+//		try        
+//		{
+//			AESystem.application.retriveResultSet(request);
+//			Thread.sleep(1000);
+//			tblViewQuestions.setItems(data);
+//		} 
+//		catch(InterruptedException ex) 
+//		{
+//			Thread.currentThread().interrupt();
+//		}
+		
+		lblMessage.setText("Data was updated successfuly");
+		lblMessage.setTextFill(Paint.valueOf("Green"));
+
+		//conn.close();
+	}
+
+
+	/*public void updateQuestion(ActionEvent event)
 	{
 		try
 		{
@@ -209,7 +240,7 @@ public class QuestionsController implements Initializable {
 			System.err.println("Got an exception! ");
 			System.err.println(e.getMessage());
 		}
-	}
+	}*/
 
 
 	public void goBackToHomePage(ActionEvent event) throws IOException

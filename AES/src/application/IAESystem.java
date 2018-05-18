@@ -1,6 +1,7 @@
 package application;
 
 import common.data.Request;
+import common.data.UpdateRequest;
 
 /**
  * This interface implements the abstract method used to display
@@ -16,5 +17,5 @@ public interface IAESystem
 	
 	public abstract void retriveResultSet(Request request);
 
-	//public abstract ResultSet populateQuestionsList(ResultSet message);
+	public abstract void update(UpdateRequest request);
 }
