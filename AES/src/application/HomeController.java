@@ -1,4 +1,4 @@
-package application.controllers;
+package application;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 public class HomeController {
 	
 	public void showQuestionsForm(ActionEvent event) throws IOException {
-		Parent tableViewParent = FXMLLoader.load(getClass().getResource("../Questions.fxml"));
+		Parent tableViewParent = FXMLLoader.load(getClass().getResource("Questions.fxml"));
         Scene tableViewScene = new Scene(tableViewParent);
         
         //This line gets the Stage information

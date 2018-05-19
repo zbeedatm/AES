@@ -1,10 +1,9 @@
-package application.controllers;
+package application;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import application.AESystem;
 import common.data.DataPage;
 import common.data.Record;
 import common.data.Request;
@@ -56,7 +55,7 @@ public class QuestionsController implements Initializable {
 		@SuppressWarnings("unused")
 		FXMLLoader loader = new FXMLLoader(
 				getClass().getResource(
-						"../Questions.fxml"
+						"Questions.fxml"
 						)
 				);
 		
@@ -245,7 +244,7 @@ public class QuestionsController implements Initializable {
 
 	public void goBackToHomePage(ActionEvent event) throws IOException
 	{
-		Parent parent = FXMLLoader.load(getClass().getResource("../Home.fxml"));
+		Parent parent = FXMLLoader.load(getClass().getResource("Home.fxml"));
 		Scene scene = new Scene(parent);
 
 		//This line gets the Stage information

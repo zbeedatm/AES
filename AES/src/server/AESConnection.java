@@ -30,7 +30,7 @@ public class AESConnection {
 
 		try 
 		{
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/aes?autoReconnect=true&useSSL=false","root","root");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/aes?autoReconnect=true&useSSL=false","root","root");
 			System.out.println("SQL connection succeed");
 		} catch (SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage());
