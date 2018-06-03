@@ -6,8 +6,7 @@ import common.data.UpdateRequest;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 
@@ -90,17 +89,18 @@ public class AESystem extends Application implements IAESystem
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			BorderPane root = new BorderPane();
-			Scene scene = new Scene(root,400,400);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			//primaryStage.setScene(scene);
-			//primaryStage.show();
+//			BorderPane root = new BorderPane();
+//			Scene scene = new Scene(root,400,400);
+//			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//			primaryStage.setScene(scene);
+//			primaryStage.show();
 			
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("Home.fxml"));
-            AnchorPane page = (AnchorPane) loader.load();
-            scene = new Scene(page);
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("Login.fxml"));
+            Pane page = loader.load();
+            Scene scene = new Scene(page);
             primaryStage.setScene(scene);
             primaryStage.show();
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -128,8 +128,6 @@ public class AESystem extends Application implements IAESystem
 		  }
 		  
 		  application= new AESystem(host, DEFAULT_PORT);
-		  //application.retriveResultSet("Java"); //for testing
-		  //client.handleMessageFromClientUI("Java");
 		  
 		  //Launch application
 		  launch(args);

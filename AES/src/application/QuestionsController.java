@@ -254,5 +254,4 @@ public class QuestionsController implements Initializable {
 		window.show();
 	}
 
-
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.LoginController">
+   <children>
+      <HBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fitHeight="147.0" fitWidth="354.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../assets/img/logo4.JPG" />
+               </image>
+            </ImageView>
+            <AnchorPane prefHeight="400.0" prefWidth="415.0" style="-fx-background-color: #cce6ff;">
+               <children>
+                  <Label layoutX="68.0" layoutY="90.0" text="User Name:" />
+                  <TextField layoutX="68.0" layoutY="107.0" prefHeight="25.0" prefWidth="246.0" />
+                  <Label layoutX="68.0" layoutY="139.0" text="Password:" />
+                  <TextField layoutX="68.0" layoutY="156.0" prefHeight="25.0" prefWidth="246.0" />
+                  <Button fx:id="btnLogin" layoutX="72.0" layoutY="188.0" mnemonicParsing="false" onAction="#login" styleClass=".custom-button" stylesheets="@application.css" text="Login" />
+                  <Label layoutX="7.0" layoutY="259.0" prefHeight="17.0" prefWidth="246.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
