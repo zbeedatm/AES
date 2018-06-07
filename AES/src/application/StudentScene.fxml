@@ -64,13 +64,7 @@
               <children>
                         <VBox prefHeight="701.0" prefWidth="673.0" AnchorPane.bottomAnchor="-678.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-137.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <HBox prefHeight="17.0">
-                                 <children>
-                                    <Label prefHeight="38.0" prefWidth="432.0" text="Welcome User" />
-                                    <Label id="lblTimer" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="242.0" text="00:00" />
-                                 </children>
-                              </HBox>
-                              <Pane fx:id="examPane" prefHeight="706.0" prefWidth="673.0" />
+                              <Pane fx:id="examPane" centerShape="true" />
                            </children>
                         </VBox>
               </children>

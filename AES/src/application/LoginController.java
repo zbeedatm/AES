@@ -44,6 +44,9 @@ public class LoginController {
 	
 	public void login(ActionEvent event) throws IOException, InterruptedException
 	{
+		//Cleanup
+		lblMessage.setText("");
+		
 		getUserRole();
 		
 		//Open the relevant scene according to the user who loged in

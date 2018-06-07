@@ -4,25 +4,22 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: ;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.StartExamController">
    <children>
-      <Label layoutX="206.0" layoutY="37.0" prefHeight="17.0" prefWidth="161.0" text="Enter Exam Code:" />
-      <TextField layoutX="206.0" layoutY="54.0" />
-      <Button layoutX="367.0" layoutY="54.0" mnemonicParsing="false" text="Submit" />
-      <Pane id="pnlStartExam" disable="true" layoutY="137.0" prefHeight="263.0" prefWidth="600.0">
+      <Label layoutX="206.0" layoutY="33.0" prefHeight="17.0" prefWidth="161.0" text="Enter Exam Code:" />
+      <TextField fx:id="txtExamCode" layoutX="206.0" layoutY="54.0" />
+      <Button fx:id="btnSubmit" layoutX="393.0" layoutY="54.0" mnemonicParsing="false" onAction="#getExamByCode" text="Submit" />
+      <Label fx:id="lblMessage" layoutX="207.0" layoutY="101.0" prefHeight="21.0" prefWidth="334.0" />
+      <Pane id="pnlStartExam" fx:id="startExamPane" layoutY="137.0" prefHeight="263.0" prefWidth="600.0" visible="false">
          <children>
-            <RadioButton layoutX="165.0" layoutY="28.0" mnemonicParsing="false" text="Manual Exam">
+            <RadioButton fx:id="rbManual" layoutX="165.0" layoutY="28.0" mnemonicParsing="false" text="Manual Exam">
                <toggleGroup>
                   <ToggleGroup fx:id="grpExamType" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton layoutX="310.0" layoutY="28.0" mnemonicParsing="false" text="Computerized Exam">
-               <toggleGroup>
-                  <ToggleGroup fx:id="grpExamType1" />
-               </toggleGroup>
-            </RadioButton>
-            <Button layoutX="159.0" layoutY="88.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="284.0" text="Start Exam" />
-            <Label layoutX="277.0" layoutY="161.0" prefHeight="17.0" prefWidth="67.0" text="Good luck!" />
+            <RadioButton fx:id="rbComputerized" layoutX="310.0" layoutY="28.0" mnemonicParsing="false" text="Computerized Exam" toggleGroup="$grpExamType" />
+            <Button fx:id="btnStartExam" layoutX="169.0" layoutY="88.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="297.0" text="Start Exam" />
+            <Label layoutX="277.0" layoutY="161.0" prefHeight="21.0" prefWidth="94.0" text="Good luck!" />
          </children>
       </Pane>
    </children>
