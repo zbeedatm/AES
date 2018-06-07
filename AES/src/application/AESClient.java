@@ -52,11 +52,14 @@ public class AESClient extends AbstractClient
 		clientUI.display(obj.toString());
 		
 		Response response = (Response) obj;
-		switch ( response.getAction().toLowerCase() ) {
-			case "get_questions": 
-					//(new QuestionsController()).populateQuestionsListView(response.getData());
-					QuestionsController.populateQuestionsListView(response.getData());
-					break;
+		switch ( response.gettarget().toLowerCase() ) {
+		case "questions": 
+			//(new QuestionsController()).populateQuestionsListView(response.getData());
+			QuestionsController.populateQuestionsListView(response.getData());
+			break;
+		case "login": 
+			LoginController.setUserRole(response.getData());
+			break;
 		}
 	}
 

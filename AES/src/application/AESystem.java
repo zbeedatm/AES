@@ -2,7 +2,6 @@ package application;
 import java.io.IOException;
 
 import common.data.Request;
-import common.data.UpdateRequest;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -80,7 +79,7 @@ public class AESystem extends Application implements IAESystem
 	}
 	
 	@Override
-	public void update(UpdateRequest request) {
+	public void update(Request request) {
 		client.handleMessageFromClientUI(request);
 	}
 	

@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import common.data.DataPage;
 import common.data.Record;
 import common.data.Request;
-import common.data.UpdateRequest;
 import common.models.Question;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -49,7 +48,7 @@ public class QuestionsController implements Initializable {
 	@FXML private Button btnBack;
 
 	private String selectedQuestionID;
-	private Request request = new Request("get_questions", "SELECT * FROM questions q inner join subjects s on q.fkSubjectID = s.subjectId;");
+	private Request request = new Request("get", "questions", "SELECT * FROM questions q inner join subjects s on q.fkSubjectID = s.subjectId;", null);
 
 	public QuestionsController() {
 		@SuppressWarnings("unused")
@@ -173,7 +172,7 @@ public class QuestionsController implements Initializable {
 		values[4] = rbAnswer4.isSelected() ? 1 : 0;
 		values[5] = selectedQuestionID;
 
-		UpdateRequest updateRequest = new UpdateRequest("update_Question", query, values);
+		Request updateRequest = new Request("update", "questions", query, values);
 		AESystem.application.update(updateRequest);
 		
 		//Call again to refresh

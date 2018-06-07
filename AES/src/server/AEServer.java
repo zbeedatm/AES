@@ -1,6 +1,5 @@
 package server;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
@@ -8,7 +7,6 @@ import common.data.DataPage;
 import common.data.Record;
 import common.data.Request;
 import common.data.Response;
-import common.data.UpdateRequest;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 
@@ -54,19 +52,19 @@ public class AEServer extends AbstractServer
 		Request request = (Request) obj;
 		Response response;
 		switch (request.getAction().toLowerCase()) {
-			case "get_questions": 
+			case "get": 
 					try {
-						response = new Response(request.getAction(),
-												handleDataReturnRequest(request.getQuery())
+						response = new Response(request.getTarget(),
+												handleDataReturnRequest(request.getQuery(), request.getValues())
 												);
 						client.sendToClient(response);
-					} catch (IOException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				break;
-			case "update_question": 
-					UpdateRequest updateRequest = (UpdateRequest) obj;
-					AESConnection.handleUpdateQuery(updateRequest.getQuery(), updateRequest.getValues());
+			case "update": 
+					//UpdateRequest updateRequest = (UpdateRequest) obj;
+					AESConnection.handleUpdateQuery(request.getQuery(), request.getValues());
 					// Causing socket exception!!!!
 //					try {
 //						client.sendToClient("Question was updated successfully.");
@@ -79,8 +77,8 @@ public class AEServer extends AbstractServer
 		//this.sendToAllClients(obj.toString());
 	}
 	
-	private DataPage handleDataReturnRequest(String query) {
-		ResultSet result = AESConnection.getQueryResult(query);
+	private DataPage handleDataReturnRequest(String query, Object[] values) throws Exception {
+		ResultSet result = AESConnection.handleGetQuery(query, values);
 		
 		DataPage data = new DataPage();
 		Record record = null;

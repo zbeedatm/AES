@@ -5,21 +5,21 @@ import java.io.Serializable;
 public class Response implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private String action;
+	private String target;
 	private DataPage data;
 	
 	public Response(String action, DataPage data) {
 		super();
-		this.action = action;
+		this.target = action;
 		this.data = data;
 	}
 
-	public String getAction() {
-		return action;
+	public String gettarget() {
+		return target;
 	}
 
-	public void setAction(String action) {
-		this.action = action;
+	public void setTarget(String action) {
+		this.target = action;
 	}
 
 	public DataPage getData() {

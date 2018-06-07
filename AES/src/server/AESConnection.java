@@ -4,7 +4,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 
 public class AESConnection {
@@ -43,9 +42,9 @@ public class AESConnection {
 		return conn;
 	}
 
-	public static ResultSet getQueryResult(String query)
+	public static ResultSet handleGetQuery(String query, Object[] values) throws Exception
 	{
-		Statement stmt;
+		/*Statement stmt;
 		ResultSet rs=null;
 		try 
 		{
@@ -57,7 +56,23 @@ public class AESConnection {
 			e.printStackTrace();
 		}
 		
-		return rs;
+		return rs;*/
+		
+		try
+		{
+			// create the java mysql update preparedstatement
+			PreparedStatement preparedStmt = prepareStatement(query, values);
+
+			return preparedStmt.executeQuery();
+			//conn.close();
+		}
+		catch (SQLException e)
+		{
+			System.err.println("Got an exception! ");
+			System.err.println(e.getMessage());
+			throw new Exception(e.getMessage() + " : " + e.getCause());
+		}
+		
 	}
 	
 	public static void handleUpdateQuery(String query, Object[] values)
@@ -65,14 +80,7 @@ public class AESConnection {
 		try
 		{
 			// create the java mysql update preparedstatement
-			PreparedStatement preparedStmt = conn.prepareStatement(query);
-			for (int i=0; i<values.length; i++) {
-				if (values[i] instanceof Integer) {
-					preparedStmt.setInt(i+1, (int) values[i]);
-				} else if (values[i] instanceof String) {
-					preparedStmt.setString(i+1, values[i].toString());
-				} 
-			}
+			PreparedStatement preparedStmt = prepareStatement(query, values);
 
 			// execute the java preparedstatement
 			preparedStmt.executeUpdate();
@@ -85,7 +93,22 @@ public class AESConnection {
 			System.err.println(e.getMessage());
 		}
 	}
+	
+	private static PreparedStatement prepareStatement(String query, Object[] values) throws SQLException {
+		PreparedStatement preparedStmt = conn.prepareStatement(query);
+		if (values!=null) {
+			for (int i=0; i<values.length; i++) {
+				if (values[i] instanceof Integer) {
+					preparedStmt.setInt(i+1, (int) values[i]);
+				} else if (values[i] instanceof String) {
+					preparedStmt.setString(i+1, values[i].toString());
+				} 
+			}
+		}
 
+		return preparedStmt;
+	}
+	
 
 	/////////////////////////////////////	For testing	////////////////////////////////////
 
