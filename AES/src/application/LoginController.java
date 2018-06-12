@@ -67,6 +67,7 @@ public class LoginController {
 
 			window.setScene(scene);
 			window.show();
+			window.setMaximized(true);
 		} else {
 			lblMessage.setTextFill(Paint.valueOf("Red"));
 			lblMessage.setText("Please enter valid credentials");

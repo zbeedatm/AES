@@ -8,7 +8,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="904.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.StudentController">
+<VBox prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.StudentController">
   <children>
     <MenuBar fx:id="menuBar" VBox.vgrow="NEVER">
       <menus>
@@ -32,7 +32,7 @@
     </MenuBar>
     <SplitPane dividerPositions="0.2505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-        <AnchorPane id="rootPane">
+        <AnchorPane id="rootPane" maxWidth="400.0">
           <children>
             <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Master" textAlignment="CENTER" wrapText="false">
               <font>
@@ -60,7 +60,7 @@
         </AnchorPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
           <content>
-            <AnchorPane fx:id="contentPane" minHeight="-1.0" minWidth="-1.0" prefHeight="23.0" prefWidth="536.0">
+            <AnchorPane fx:id="contentPane" minHeight="-1.0" minWidth="-1.0">
               <children>
                         <VBox prefHeight="701.0" prefWidth="673.0" AnchorPane.bottomAnchor="-678.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-137.0" AnchorPane.topAnchor="0.0">
                            <children>

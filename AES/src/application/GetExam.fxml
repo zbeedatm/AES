@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.GetExamController">
+   <children>
+      <Pane fx:id="examCodePane" prefHeight="110.0" prefWidth="804.0">
+         <children>
+            <Label layoutX="269.0" layoutY="14.0" prefHeight="17.0" prefWidth="161.0" text="Enter Exam Code:" />
+            <TextField fx:id="txtExamCode" layoutX="269.0" layoutY="40.0" />
+            <Button fx:id="btnSubmit" layoutX="456.0" layoutY="40.0" mnemonicParsing="false" onAction="#getExamByCode" text="Submit" />
+            <Label fx:id="lblMessage" layoutX="269.0" layoutY="75.0" prefHeight="21.0" prefWidth="422.0" />
+         </children>
+      </Pane>
+      <Pane id="pnlStartExam" fx:id="startExamPane" layoutX="4.0" layoutY="120.0" prefHeight="243.0" prefWidth="800.0" visible="false">
+         <children>
+            <RadioButton fx:id="rbManual" layoutX="248.0" layoutY="28.0" mnemonicParsing="false" text="Manual Exam">
+               <toggleGroup>
+                  <ToggleGroup fx:id="grpExamType" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="rbComputerized" layoutX="393.0" layoutY="28.0" mnemonicParsing="false" selected="true" text="Computerized Exam" toggleGroup="$grpExamType" />
+            <Button fx:id="btnStartExam" layoutX="252.0" layoutY="60.0" mnemonicParsing="false" onAction="#startExam" prefHeight="31.0" prefWidth="297.0" text="Start Exam" />
+            <Label fx:id="lblInstructions" layoutX="37.0" layoutY="122.0" prefHeight="100.0" prefWidth="422.0">
+               <font>
+                  <Font size="24.0" />
+               </font></Label>
+            <Label fx:id="lblTimer" layoutX="586.0" layoutY="109.0" prefHeight="100.0" prefWidth="200.0">
+               <font>
+                  <Font size="78.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Pane fx:id="examQuestionsPane" layoutX="100.0" layoutY="362.0" prefHeight="295.0" prefWidth="593.0" visible="false">
+         <children>
+            <Pagination fx:id="questionsPagination" pageCount="10" prefHeight="218.0" prefWidth="593.0" />
+            <Button layoutX="243.0" layoutY="237.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="108.0" text="Submit" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

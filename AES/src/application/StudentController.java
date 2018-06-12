@@ -26,7 +26,7 @@ public class StudentController implements Initializable  {
 	private Pane examPane;
 	
 	public StudentController() throws IOException {
-		//Pane startExamPane = FXMLLoader.load(getClass().getResource("StartExam.fxml"));
+		//Pane startExamPane = FXMLLoader.load(getClass().getResource("GetExam.fxml"));
 		//examPane.getChildren().add(startExamPane);
 	}
 	
@@ -34,7 +34,7 @@ public class StudentController implements Initializable  {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		Pane startExamPane = null;
 		try {
-			startExamPane = FXMLLoader.load(getClass().getResource("StartExam.fxml"));
+			startExamPane = FXMLLoader.load(getClass().getResource("GetExam.fxml"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
