@@ -60,10 +60,13 @@ public class AESClient extends AbstractClient
 		case "login": 
 			LoginController.setUserRole(response.getData());
 			break;
-		case "get_exam": 
+		case "exam_get_code": 
 			GetExamController.setExamCode(response.getData());
 			break;
-		case "start_exam": 
+		case "exam_get_student_test": 
+			GetExamController.checkStudentTestExist(response.getData());
+			break;
+		case "exam_start_exam": 
 			GetExamController.setExamQuestions(response.getData());
 			break;
 		}

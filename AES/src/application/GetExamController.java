@@ -1,12 +1,16 @@
 package application;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import common.data.DataPage;
 import common.data.Record;
 import common.data.Request;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -18,7 +22,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -59,15 +65,26 @@ public class GetExamController {
 	
 	@FXML
 	private Label lblTimer;
+	
+	@FXML
+	private Button btnSubmitExam;
+	
+	@FXML
+	private Label lblScore;
 
 	private static String examCode;
 	private static String testID;
 	private static int numOfQuestions;
 	private static int testDuration;
+	private int duration;
+	private int solutionDuration;
+	private int totalScore=0;
 	private static int pointsPerQuestion;
 	private static String remarksForStudents;
 	private static Object lock = null;
 	private static DataPage dataPage = null;
+	private static boolean studentDidThisTestAlready=false;
+	private Map<String,Integer> correctAnswers = new HashMap<>();
 
 	public GetExamController() throws IOException {
 		//FXMLLoader.load(getClass().getResource("GetExam.fxml"));
@@ -86,7 +103,7 @@ public class GetExamController {
 			lblMessage.setTextFill(Paint.valueOf("Red"));
 			lblMessage.setText("Please enter exam code");
 		}else {
-			Request request = new Request("get", "get_exam", query, values);
+			Request request = new Request("get", "exam_get_code", query, values);
 			AESystem.application.retriveResultSet(request);
 
 			//loginLatch.countDown();
@@ -122,14 +139,6 @@ public class GetExamController {
 	public void startExam(ActionEvent event) throws IOException, InterruptedException {
 		if (rbComputerized.isSelected()) {
 			
-//			Pane startExamPane = null;
-//			try {
-//				startExamPane = FXMLLoader.load(getClass().getResource("StartExam.fxml"));
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			examQuestionsPane.getChildren().add(startExamPane);
-			
 			examQuestionsPane.setVisible(true);
 			examCodePane.setDisable(true);
 			startExamPane.setDisable(true);
@@ -141,32 +150,31 @@ public class GetExamController {
 				lock.wait();
 			}
 			
-			lblInstructions.setText(remarksForStudents + "\n\n Duration: " + testDuration + " minutes");
-//			Timer timer = new Timer();
-//			TimerTask task = new TimerTask()
-//			{
-//			        public void run()
-//			        {
-//			        	lblTimer.setText(String.valueOf((testDuration*1000-1)/1000));      
-//			        }
-//
-//			};
-//			timer.schedule(task,5000l);
+			lblInstructions.setText(remarksForStudents + "\nDuration: " + testDuration + " minutes");
+			lblInstructions.setStyle("-fx-border-color: black;");
+			
+			duration = testDuration;
+					
 			// update timerLabel
-			lblTimer.setText(String.valueOf(testDuration));
+			lblTimer.setText(String.valueOf(duration));
+			lblTimer.setStyle("-fx-border-color: black;");
+			
 	        Timeline timeline = new Timeline();
 	        timeline.setCycleCount(Timeline.INDEFINITE);
 	        timeline.getKeyFrames().add(
-	                new KeyFrame(Duration.seconds(1),
+	                new KeyFrame(Duration.seconds(60),
 	                  new EventHandler() {
 	                    // KeyFrame event handler
 	                	@Override
 	                    public void handle(Event event) {
-	                    	testDuration--;
+	                		duration--;
 	                        // update timerLabel
-	                        lblTimer.setText(String.valueOf(testDuration));
+	                        lblTimer.setText(String.valueOf(duration));
+	                        solutionDuration = testDuration - duration;
 	                        if (testDuration <= 0) {
 	                            timeline.stop();
+	                            btnSubmitExam.fire();
+	                            examQuestionsPane.setDisable(true);
 	                        }
 	                      }
 	                }));
@@ -193,29 +201,81 @@ public class GetExamController {
 		String[] values = new String[1];
 		values[0] = testID;
 		
-		Request request = new Request("get", "start_exam", query.toString(), values);
+		Request request = new Request("get", "exam_start_exam", query.toString(), values);
 		AESystem.application.retriveResultSet(request);
 	}
 	
 	public VBox createPage(int pageIndex) {
 		VBox box = new VBox(2);
 		VBox element = new VBox();
-		
+
 		Label lblQuestion = new Label("\n\n" + dataPage.get(pageIndex).get(15));
 		ToggleGroup tg = new ToggleGroup();
-		RadioButton rb1 = new RadioButton("a");
+		RadioButton rb1 = new RadioButton("1");
+		rb1.setUserData("1");
 		rb1.setToggleGroup(tg);
-		RadioButton rb2 = new RadioButton("b");
+		RadioButton rb2 = new RadioButton("2");
+		rb2.setUserData("2");
 		rb2.setToggleGroup(tg);
-		RadioButton rb3 = new RadioButton("c");
+		RadioButton rb3 = new RadioButton("3");
+		rb3.setUserData("3");
 		rb3.setToggleGroup(tg);
-		RadioButton rb4 = new RadioButton("d");
+		RadioButton rb4 = new RadioButton("4");
+		rb4.setUserData("4");
 		rb4.setToggleGroup(tg);
-		
+
 		element.getChildren().addAll(lblQuestion, rb1, rb2, rb3, rb4);
 		box.getChildren().add(element);
 		box.setAlignment(Pos.CENTER);
 		
+		Integer selectedAnswer = correctAnswers.get(dataPage.get(pageIndex).get(12));
+		if ( selectedAnswer != null) {
+			switch (selectedAnswer) {
+			case 1: tg.selectToggle(rb1);
+					break;
+			case 2: tg.selectToggle(rb2);
+					break;
+			case 3: tg.selectToggle(rb3);
+					break;
+			case 4: tg.selectToggle(rb4);
+					break;
+			}
+		}
+
+		tg.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+			public void changed(ObservableValue<? extends Toggle> ov,
+					Toggle old_toggle, Toggle new_toggle) {
+				if (tg.getSelectedToggle() != null) {
+					int answer = Integer.valueOf( tg.getSelectedToggle().getUserData().toString());
+					correctAnswers.put(dataPage.get(pageIndex).get(12), answer);
+					//System.out.println(correctAnswers);
+					
+					switch (answer) {
+					case 1: 
+							if (Integer.parseInt( dataPage.get(pageIndex).get(16) ) == 1) {
+								totalScore = totalScore + pointsPerQuestion;
+							}
+					break;
+					case 2: 
+							if (Integer.parseInt( dataPage.get(pageIndex).get(17) ) == 1) {
+								totalScore = totalScore + pointsPerQuestion;
+							}
+					break;
+					case 3: 
+							if (Integer.parseInt( dataPage.get(pageIndex).get(18) ) == 1) {
+								totalScore = totalScore + pointsPerQuestion;
+							}
+					break;
+					case 4: 
+							if (Integer.parseInt( dataPage.get(pageIndex).get(19) ) == 1) {
+								totalScore = totalScore + pointsPerQuestion;
+							}
+					break;
+					}
+				}
+			}
+		});
+
 		return box;
 	}
 	
@@ -225,5 +285,73 @@ public class GetExamController {
 		synchronized (lock) {
 			lock.notifyAll();
 		}
+	}
+	
+	public void checkStudentTestExist() {
+		String query = "SELECT * FROM student_test where users_userID=? and exams_examCode=? and lower(selectedExamType)=?;";
+		String[] values = new String[3];
+		values[0] = LoginController.userId;
+		values[1] = txtExamCode.getText();
+		values[2] = rbComputerized.getText().toLowerCase();
+
+		Request request = new Request("get", "exam_get_student_test", query, values);
+		AESystem.application.retriveResultSet(request);
+	}
+	
+	public static void checkStudentTestExist(DataPage data) {
+		if (data.size() > 0) {
+			studentDidThisTestAlready = true;
+		} else {
+			studentDidThisTestAlready = false;
+		}
+
+		synchronized (lock) {
+			lock.notifyAll();
+		}
+	}
+	
+	public void submitExam(ActionEvent event) throws InterruptedException {
+		checkStudentTestExist();
+		
+		lock = new Object();
+		synchronized (lock) {
+			lock.wait();
+		}
+		
+		Request updateRequest=null;
+		if (studentDidThisTestAlready) {
+			String query = new StringBuilder("")
+					.append("update student_test set solutionDuration=?, status=?, grade=?, examSubmitted=?, answers=?").toString();
+			
+			Object[] values = new Object[5];
+			values[0] = solutionDuration;
+			values[1] = "Done";
+			values[2] = totalScore;
+			values[3] = 1;
+			values[4] = correctAnswers.toString();
+			
+			updateRequest = new Request("update", "exam_submit_exam", query, values);
+		} else {
+			String query = new StringBuilder("")
+					.append("insert into student_test (solutionDuration, status, grade, examSubmitted, answers, users_userID, exams_examCode, selectedExamType)")
+					.append("values(?, ?, ?, ?, ?, ?, ?, ?);").toString();
+			
+			Object[] values = new Object[8];
+			values[0] = solutionDuration;
+			values[1] = "Done";
+			values[2] = totalScore;
+			values[3] = 1;
+			values[4] = correctAnswers.toString();
+			values[5] = LoginController.userId;
+			values[6] = examCode;
+			values[7] = rbComputerized.getText();
+			
+			updateRequest = new Request("update", "exam_submit_exam", query, values);
+		}
+		
+		AESystem.application.update(updateRequest);
+		
+		lblScore.setText("Your Score: " + totalScore);
+		examQuestionsPane.setDisable(true);
 	}
 }
