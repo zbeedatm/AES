@@ -46,12 +46,18 @@
                     <panes>
                       <TitledPane animated="false" text="Manual Exams">
                         <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <ListView fx:id="manualExamsList" prefHeight="649.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children></AnchorPane>
                         </content>
                       </TitledPane>
                       <TitledPane animated="false" text="Computerized Exams">
                         <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <ListView fx:id="computerizedExamsList" prefHeight="649.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children></AnchorPane>
                         </content>
                       </TitledPane>
                     </panes>
@@ -62,7 +68,7 @@
           <content>
             <AnchorPane fx:id="contentPane" minHeight="-1.0" minWidth="-1.0">
               <children>
-                        <VBox prefHeight="701.0" prefWidth="673.0" AnchorPane.bottomAnchor="-678.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-137.0" AnchorPane.topAnchor="0.0">
+                        <VBox alignment="CENTER" prefHeight="712.0" prefWidth="762.0" AnchorPane.bottomAnchor="-712.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-762.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <Pane fx:id="examPane" centerShape="true" />
                            </children>

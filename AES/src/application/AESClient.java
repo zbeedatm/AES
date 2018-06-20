@@ -69,6 +69,12 @@ public class AESClient extends AbstractClient
 		case "exam_start_exam": 
 			GetExamController.setExamQuestions(response.getData());
 			break;
+		case "student_get_computerized_exams": 
+			StudentController.fillComputerizedExamsList(response.getData());
+			break;
+		case "student_get_manual_exams": 
+			StudentController.fillManualExamsList(response.getData());
+			break;
 		}
 	}
 

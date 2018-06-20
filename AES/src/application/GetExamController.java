@@ -24,7 +24,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -85,6 +84,8 @@ public class GetExamController {
 	private static DataPage dataPage = null;
 	private static boolean studentDidThisTestAlready=false;
 	private Map<String,Integer> correctAnswers = new HashMap<>();
+	
+	private Timeline timeline = new Timeline();
 
 	public GetExamController() throws IOException {
 		//FXMLLoader.load(getClass().getResource("GetExam.fxml"));
@@ -114,6 +115,7 @@ public class GetExamController {
 
 			if (examCode != null && !examCode.isEmpty()) {
 				startExamPane.setVisible(true);
+				//examQuestionsPane.setVisible(false); //TODO
 			} else {
 				lblMessage.setTextFill(Paint.valueOf("Red"));
 				lblMessage.setText("No such exam, please enter a valid one");
@@ -159,7 +161,7 @@ public class GetExamController {
 			lblTimer.setText(String.valueOf(duration));
 			lblTimer.setStyle("-fx-border-color: black;");
 			
-	        Timeline timeline = new Timeline();
+	        //Timeline timeline = new Timeline();
 	        timeline.setCycleCount(Timeline.INDEFINITE);
 	        timeline.getKeyFrames().add(
 	                new KeyFrame(Duration.seconds(60),
@@ -171,7 +173,7 @@ public class GetExamController {
 	                        // update timerLabel
 	                        lblTimer.setText(String.valueOf(duration));
 	                        solutionDuration = testDuration - duration;
-	                        if (testDuration <= 0) {
+	                        if (solutionDuration <= 0) {
 	                            timeline.stop();
 	                            btnSubmitExam.fire();
 	                            examQuestionsPane.setDisable(true);
@@ -209,7 +211,7 @@ public class GetExamController {
 		VBox box = new VBox(2);
 		VBox element = new VBox();
 
-		Label lblQuestion = new Label("\n\n" + dataPage.get(pageIndex).get(15));
+		Label lblQuestion = new Label(dataPage.get(pageIndex).get(15) + "\n\n");
 		ToggleGroup tg = new ToggleGroup();
 		RadioButton rb1 = new RadioButton("1");
 		rb1.setUserData("1");
@@ -319,32 +321,26 @@ public class GetExamController {
 		}
 		
 		Request updateRequest=null;
+		Object[] values = new Object[8];
+		values[0] = solutionDuration;
+		values[1] = "Completed";
+		values[2] = totalScore;
+		values[3] = 1;
+		values[4] = correctAnswers.toString();
+		values[5] = LoginController.userId;
+		values[6] = examCode;
+		values[7] = rbComputerized.getText();
+		
 		if (studentDidThisTestAlready) {
 			String query = new StringBuilder("")
-					.append("update student_test set solutionDuration=?, status=?, grade=?, examSubmitted=?, answers=?").toString();
-			
-			Object[] values = new Object[5];
-			values[0] = solutionDuration;
-			values[1] = "Done";
-			values[2] = totalScore;
-			values[3] = 1;
-			values[4] = correctAnswers.toString();
+					.append("update student_test set solutionDuration=?, status=?, grade=?, examSubmitted=?, answers=? ")
+					.append("where users_userID=? and exams_examCode=? and lower(selectedExamType)=?;").toString();
 			
 			updateRequest = new Request("update", "exam_submit_exam", query, values);
 		} else {
 			String query = new StringBuilder("")
 					.append("insert into student_test (solutionDuration, status, grade, examSubmitted, answers, users_userID, exams_examCode, selectedExamType)")
 					.append("values(?, ?, ?, ?, ?, ?, ?, ?);").toString();
-			
-			Object[] values = new Object[8];
-			values[0] = solutionDuration;
-			values[1] = "Done";
-			values[2] = totalScore;
-			values[3] = 1;
-			values[4] = correctAnswers.toString();
-			values[5] = LoginController.userId;
-			values[6] = examCode;
-			values[7] = rbComputerized.getText();
 			
 			updateRequest = new Request("update", "exam_submit_exam", query, values);
 		}
@@ -353,5 +349,6 @@ public class GetExamController {
 		
 		lblScore.setText("Your Score: " + totalScore);
 		examQuestionsPane.setDisable(true);
+		timeline.stop();
 	}
 }

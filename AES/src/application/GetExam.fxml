@@ -27,7 +27,7 @@
             <Button fx:id="btnStartExam" layoutX="252.0" layoutY="60.0" mnemonicParsing="false" onAction="#startExam" prefHeight="31.0" prefWidth="297.0" text="Start Exam" />
             <Label fx:id="lblInstructions" layoutX="63.0" layoutY="122.0" prefHeight="100.0" prefWidth="422.0">
                <font>
-                  <Font size="24.0" />
+                  <Font size="14.0" />
                </font>
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
