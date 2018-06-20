@@ -35,6 +35,9 @@ public class LoginController {
 	@SuppressWarnings("unused")
 	public static String userId;
 	
+	@SuppressWarnings("unused")
+	public static String userName;
+	
 	public static String userRole;
 	
 	private static Object lock = null;
@@ -102,6 +105,7 @@ public class LoginController {
 	public static void setUserRole(DataPage data) {
 		for (Record record : data){
 			userId = record.get(0);
+			userName = record.get(1);
 			userRole = record.get(2);
 		}
 		

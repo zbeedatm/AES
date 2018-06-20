@@ -1,8 +1,16 @@
 package application;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import common.data.DataPage;
 import common.data.Record;
@@ -27,6 +35,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
@@ -139,56 +149,59 @@ public class GetExamController {
 	}
 
 	public void startExam(ActionEvent event) throws IOException, InterruptedException {
+		examQuestionsPane.setVisible(true);
+		examCodePane.setDisable(true);
+		startExamPane.setDisable(true);
+
+		getTestQuestions();
+
+		lock = new Object();
+		synchronized (lock) {
+			lock.wait();
+		}
+
+		lblInstructions.setText(remarksForStudents + "\nDuration: " + testDuration + " minutes");
+		lblInstructions.setStyle("-fx-border-color: black;");
+
+		duration = testDuration;
+
+		// update timerLabel
+		lblTimer.setText(String.valueOf(duration));
+		lblTimer.setStyle("-fx-border-color: black;");
+
+		//Timeline timeline = new Timeline();
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		timeline.getKeyFrames().add(
+				new KeyFrame(Duration.seconds(60),
+						new EventHandler() {
+					// KeyFrame event handler
+					@Override
+					public void handle(Event event) {
+						duration--;
+						// update timerLabel
+						lblTimer.setText(String.valueOf(duration));
+						solutionDuration = testDuration - duration;
+						if (solutionDuration <= 0) {
+							timeline.stop();
+							btnSubmitExam.fire();
+							examQuestionsPane.setDisable(true);
+						}
+					}
+				}));
+		timeline.playFromStart();
+
 		if (rbComputerized.isSelected()) {
-			
-			examQuestionsPane.setVisible(true);
-			examCodePane.setDisable(true);
-			startExamPane.setDisable(true);
-			
-			getTestQuestions();
-			
-			lock = new Object();
-			synchronized (lock) {
-				lock.wait();
-			}
-			
-			lblInstructions.setText(remarksForStudents + "\nDuration: " + testDuration + " minutes");
-			lblInstructions.setStyle("-fx-border-color: black;");
-			
-			duration = testDuration;
-					
-			// update timerLabel
-			lblTimer.setText(String.valueOf(duration));
-			lblTimer.setStyle("-fx-border-color: black;");
-			
-	        //Timeline timeline = new Timeline();
-	        timeline.setCycleCount(Timeline.INDEFINITE);
-	        timeline.getKeyFrames().add(
-	                new KeyFrame(Duration.seconds(60),
-	                  new EventHandler() {
-	                    // KeyFrame event handler
-	                	@Override
-	                    public void handle(Event event) {
-	                		duration--;
-	                        // update timerLabel
-	                        lblTimer.setText(String.valueOf(duration));
-	                        solutionDuration = testDuration - duration;
-	                        if (solutionDuration <= 0) {
-	                            timeline.stop();
-	                            btnSubmitExam.fire();
-	                            examQuestionsPane.setDisable(true);
-	                        }
-	                      }
-	                }));
-	        timeline.playFromStart();
-			
+			questionsPagination.setVisible(true);
 			questionsPagination.setPageCount(numOfQuestions);
 			questionsPagination.setPageFactory(new Callback<Integer, Node>() {
-	            @Override
-	            public Node call(Integer pageIndex) {
-	                return createPage(pageIndex);
-	            }
-	        });
+				@Override
+				public Node call(Integer pageIndex) {
+					return createPage(pageIndex);
+				}
+			});
+		} else if (rbManual.isSelected()) {
+			questionsPagination.setVisible(false);
+			createWordDocument();
 		}
 	}
 
@@ -320,35 +333,85 @@ public class GetExamController {
 			lock.wait();
 		}
 		
-		Request updateRequest=null;
-		Object[] values = new Object[8];
-		values[0] = solutionDuration;
-		values[1] = "Completed";
-		values[2] = totalScore;
-		values[3] = 1;
-		values[4] = correctAnswers.toString();
-		values[5] = LoginController.userId;
-		values[6] = examCode;
-		values[7] = rbComputerized.getText();
-		
-		if (studentDidThisTestAlready) {
-			String query = new StringBuilder("")
-					.append("update student_test set solutionDuration=?, status=?, grade=?, examSubmitted=?, answers=? ")
-					.append("where users_userID=? and exams_examCode=? and lower(selectedExamType)=?;").toString();
+		if (rbComputerized.isSelected()) {
+			Request updateRequest=null;
+			Object[] values = new Object[8];
+			values[0] = solutionDuration;
+			values[1] = "Completed";
+			values[2] = totalScore;
+			values[3] = 1;
+			values[4] = correctAnswers.toString();
+			values[5] = LoginController.userId;
+			values[6] = examCode;
+			values[7] = rbComputerized.getText();
+
+			if (studentDidThisTestAlready) {
+				String query = new StringBuilder("")
+						.append("update student_test set solutionDuration=?, status=?, grade=?, examSubmitted=?, answers=? ")
+						.append("where users_userID=? and exams_examCode=? and lower(selectedExamType)=?;").toString();
+
+				updateRequest = new Request("update", "exam_submit_exam", query, values);
+			} else {
+				String query = new StringBuilder("")
+						.append("insert into student_test (solutionDuration, status, grade, examSubmitted, answers, users_userID, exams_examCode, selectedExamType)")
+						.append("values(?, ?, ?, ?, ?, ?, ?, ?);").toString();
+
+				updateRequest = new Request("update", "exam_submit_exam", query, values);
+			}
+
+			AESystem.application.update(updateRequest);
+
+			lblScore.setText("Your Score: " + totalScore);
+			examQuestionsPane.setDisable(true);
 			
-			updateRequest = new Request("update", "exam_submit_exam", query, values);
-		} else {
-			String query = new StringBuilder("")
-					.append("insert into student_test (solutionDuration, status, grade, examSubmitted, answers, users_userID, exams_examCode, selectedExamType)")
-					.append("values(?, ?, ?, ?, ?, ?, ?, ?);").toString();
-			
-			updateRequest = new Request("update", "exam_submit_exam", query, values);
+		} else if (rbManual.isSelected()) {
+			selectFile(event);
 		}
 		
-		AESystem.application.update(updateRequest);
-		
-		lblScore.setText("Your Score: " + totalScore);
-		examQuestionsPane.setDisable(true);
 		timeline.stop();
+	}
+	
+	private void createWordDocument(/*List<String> lines*/) throws IOException {
+		int index=0;
+
+		//Blank Document
+		XWPFDocument document = new XWPFDocument();
+		//Write the Document in file system
+		String path = Paths.get(".").toAbsolutePath().normalize().toString() + File.separator + "exams" + File.separator;
+		String fileName = path + LoginController.userName + "_" + examCode + ".docx";
+		FileOutputStream out = new FileOutputStream(
+									new File(fileName) );
+
+		//for (String line : lines) {
+		for (Record record : dataPage){
+			//create Paragraph
+			XWPFParagraph paragraph = document.createParagraph();
+			XWPFRun run = paragraph.createRun();
+			
+			run.setText( (index+1) + ") " + dataPage.get(index).get(15) + "\n\n");
+			index++;
+		}
+		
+		document.write(out);
+		
+		//Close document
+		out.close();
+		
+		openDocument(fileName);
+	}
+	
+	private void openDocument(String fileName) throws IOException {
+		File file = new File(fileName);
+		
+		Desktop desktop = Desktop.getDesktop();
+        if(file.exists()) desktop.open(file);
+	}
+	
+	private void selectFile(ActionEvent event) {
+		Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
+		
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Select Exam");
+		fileChooser.showOpenDialog(window);
 	}
 }
