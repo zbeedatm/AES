@@ -24,7 +24,7 @@
                </toggleGroup>
             </RadioButton>
             <RadioButton fx:id="rbComputerized" layoutX="393.0" layoutY="28.0" mnemonicParsing="false" selected="true" text="Computerized" toggleGroup="$grpExamType" />
-            <Button fx:id="btnStartExam" layoutX="252.0" layoutY="60.0" mnemonicParsing="false" onAction="#startExam" prefHeight="31.0" prefWidth="297.0" text="Start Exam" />
+            <Button fx:id="btnStartExam" layoutX="227.0" layoutY="61.0" mnemonicParsing="false" onAction="#startExam" prefHeight="31.0" prefWidth="297.0" text="Start Exam" />
             <Label fx:id="lblInstructions" layoutX="63.0" layoutY="122.0" prefHeight="100.0" prefWidth="422.0">
                <font>
                   <Font size="14.0" />
@@ -45,8 +45,14 @@
       <Pane fx:id="examQuestionsPane" layoutX="100.0" layoutY="362.0" prefHeight="383.0" prefWidth="593.0" visible="false">
          <children>
             <Pagination fx:id="questionsPagination" pageCount="10" prefHeight="218.0" prefWidth="593.0" visible="false" />
+            <HBox fx:id="selectFileHBox" layoutX="31.0" layoutY="109.0" prefHeight="100.0" prefWidth="531.0" visible="false">
+               <children>
+                  <TextField fx:id="txtSelectedFile" prefHeight="25.0" prefWidth="476.0" promptText="File To Upload" />
+                  <Button fx:id="btnSelect" mnemonicParsing="false" onAction="#selectFile" prefHeight="25.0" prefWidth="55.0" text="Select" />
+               </children>
+            </HBox>
             <Button fx:id="btnSubmitExam" layoutX="243.0" layoutY="237.0" mnemonicParsing="false" onAction="#submitExam" prefHeight="44.0" prefWidth="108.0" text="Submit" />
-            <Label fx:id="lblScore" layoutX="222.0" layoutY="314.0" prefHeight="44.0" prefWidth="211.0">
+            <Label fx:id="lblScore" alignment="CENTER" layoutX="159.0" layoutY="314.0" prefHeight="44.0" prefWidth="317.0" wrapText="true">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>

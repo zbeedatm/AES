@@ -25,6 +25,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
@@ -32,6 +34,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -80,6 +83,15 @@ public class GetExamController {
 	
 	@FXML
 	private Label lblScore;
+	
+	@FXML
+	private HBox selectFileHBox;
+	
+	@FXML
+	private TextField txtSelectedFile;
+	
+	@FXML
+	private Button btnSelect;
 
 	private static String examCode;
 	private static String testID;
@@ -96,6 +108,7 @@ public class GetExamController {
 	private Map<String,Integer> correctAnswers = new HashMap<>();
 	
 	private Timeline timeline = new Timeline();
+	private File fileChoice;
 
 	public GetExamController() throws IOException {
 		//FXMLLoader.load(getClass().getResource("GetExam.fxml"));
@@ -201,6 +214,7 @@ public class GetExamController {
 			});
 		} else if (rbManual.isSelected()) {
 			questionsPagination.setVisible(false);
+			selectFileHBox.setVisible(true);
 			createWordDocument();
 		}
 	}
@@ -307,7 +321,7 @@ public class GetExamController {
 		String[] values = new String[3];
 		values[0] = LoginController.userId;
 		values[1] = txtExamCode.getText();
-		values[2] = rbComputerized.getText().toLowerCase();
+		values[2] = rbComputerized.isSelected() ? rbComputerized.getText().toLowerCase() : rbManual.getText().toLowerCase();
 
 		Request request = new Request("get", "exam_get_student_test", query, values);
 		AESystem.application.retriveResultSet(request);
@@ -327,45 +341,65 @@ public class GetExamController {
 	
 	public void submitExam(ActionEvent event) throws InterruptedException {
 		checkStudentTestExist();
-		
+
 		lock = new Object();
 		synchronized (lock) {
 			lock.wait();
 		}
-		
+
+		Request updateRequest=null;
+		Object[] values = new Object[8];
+		values[0] = solutionDuration;
+		values[1] = "Completed";
+		values[2] = totalScore;
+		values[3] = 1;
+		values[4] = correctAnswers.toString();
+		values[5] = LoginController.userId;
+		values[6] = examCode;
+
 		if (rbComputerized.isSelected()) {
-			Request updateRequest=null;
-			Object[] values = new Object[8];
-			values[0] = solutionDuration;
-			values[1] = "Completed";
-			values[2] = totalScore;
-			values[3] = 1;
-			values[4] = correctAnswers.toString();
-			values[5] = LoginController.userId;
-			values[6] = examCode;
 			values[7] = rbComputerized.getText();
+		} else if (rbManual.isSelected()) {
+			values[2] = -1; //score
+			values[7] = rbManual.getText();
+		}
+		
+		if (studentDidThisTestAlready) {
+			String query = new StringBuilder("")
+					.append("update student_test set solutionDuration=?, status=?, grade=?, examSubmitted=?, answers=? ")
+					.append("where users_userID=? and exams_examCode=? and lower(selectedExamType)=?;").toString();
 
-			if (studentDidThisTestAlready) {
-				String query = new StringBuilder("")
-						.append("update student_test set solutionDuration=?, status=?, grade=?, examSubmitted=?, answers=? ")
-						.append("where users_userID=? and exams_examCode=? and lower(selectedExamType)=?;").toString();
+			updateRequest = new Request("update", "exam_submit_exam", query, values);
+		} else {
+			String query = new StringBuilder("")
+					.append("insert into student_test (solutionDuration, status, grade, examSubmitted, answers, users_userID, exams_examCode, selectedExamType)")
+					.append("values(?, ?, ?, ?, ?, ?, ?, ?);").toString();
 
-				updateRequest = new Request("update", "exam_submit_exam", query, values);
-			} else {
-				String query = new StringBuilder("")
-						.append("insert into student_test (solutionDuration, status, grade, examSubmitted, answers, users_userID, exams_examCode, selectedExamType)")
-						.append("values(?, ?, ?, ?, ?, ?, ?, ?);").toString();
+			updateRequest = new Request("update", "exam_submit_exam", query, values);
+		}
 
-				updateRequest = new Request("update", "exam_submit_exam", query, values);
-			}
-
-			AESystem.application.update(updateRequest);
-
+		if (rbComputerized.isSelected()) {
 			lblScore.setText("Your Score: " + totalScore);
 			examQuestionsPane.setDisable(true);
 			
+			AESystem.application.update(updateRequest);
 		} else if (rbManual.isSelected()) {
-			selectFile(event);
+
+			if (fileChoice == null) {
+				// handle cancellation properly
+
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Warning!");
+				alert.setHeaderText("No file is selected.");
+				alert.setContentText("Attach file with your answers to be uploaded to the system!");
+
+				alert.showAndWait();
+			}
+			else {
+				AESystem.application.update(updateRequest);
+				lblScore.setText("Your exam will be checked.");
+				examQuestionsPane.setDisable(true);
+			}
 		}
 		
 		timeline.stop();
@@ -407,11 +441,13 @@ public class GetExamController {
         if(file.exists()) desktop.open(file);
 	}
 	
-	private void selectFile(ActionEvent event) {
+	public void selectFile(ActionEvent event) {
 		Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
 		
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Select Exam");
-		fileChooser.showOpenDialog(window);
+		fileChoice = fileChooser.showOpenDialog(window);
+		
+		txtSelectedFile.setText(fileChoice.getPath());
 	}
 }
