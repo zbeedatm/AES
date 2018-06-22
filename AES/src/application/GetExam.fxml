@@ -12,7 +12,7 @@
          <children>
             <Label layoutX="269.0" layoutY="14.0" prefHeight="17.0" prefWidth="161.0" text="Enter Exam Code:" />
             <TextField fx:id="txtExamCode" layoutX="269.0" layoutY="40.0" />
-            <Button fx:id="btnSubmit" layoutX="418.0" layoutY="40.0" mnemonicParsing="false" onAction="#getExamByCode" text="Submit" />
+            <Button fx:id="btnSubmit" layoutX="455.0" layoutY="40.0" mnemonicParsing="false" onAction="#getExamByCode" text="Submit" />
             <Label fx:id="lblMessage" layoutX="269.0" layoutY="75.0" prefHeight="21.0" prefWidth="422.0" />
          </children>
       </Pane>
@@ -48,7 +48,7 @@
             <HBox fx:id="selectFileHBox" layoutX="31.0" layoutY="109.0" prefHeight="100.0" prefWidth="531.0" visible="false">
                <children>
                   <TextField fx:id="txtSelectedFile" prefHeight="25.0" prefWidth="476.0" promptText="File To Upload" />
-                  <Button fx:id="btnSelect" mnemonicParsing="false" onAction="#selectFile" prefHeight="25.0" prefWidth="55.0" text="Select" />
+                  <Button fx:id="btnSelect" mnemonicParsing="false" onAction="#selectFile" prefHeight="31.0" prefWidth="94.0" text="Select" />
                </children>
             </HBox>
             <Button fx:id="btnSubmitExam" layoutX="243.0" layoutY="237.0" mnemonicParsing="false" onAction="#submitExam" prefHeight="44.0" prefWidth="108.0" text="Submit" />
